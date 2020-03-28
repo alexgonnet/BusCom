@@ -6,6 +6,12 @@
 #include <msp430g2553.h>
 #include <string.h>
 #include <stdlib.h>
+#include "Dplc.h""
+
+#define RECULER 1
+#define AVANCER 2
+#define GAUCHE 3
+#define DROITE 4
 
 typedef enum
 {
@@ -142,7 +148,16 @@ void TXdata( unsigned char c )
                 UCA0TXBUF = stringPrint[i];              // TX -> RXed character
                 i++;
             }
+            i = 0;
+            strcpy(stringPrint,"\tespace: start/stop\n\r\tz: avancer\n\r\ts: reculer\n\r\tq: gauche\n\r\td: droite\n\r");
+            while(stringPrint[i] != '\0')
+            {
+                while (!(IFG2 & UCA0TXIFG));  // USCI_A0 TX buffer ready?
+                UCA0TXBUF = stringPrint[i];              // TX -> RXed character
+                i++;
+            }
             break;
+
 
         case 'i':
             strcpy(stringPrint,"IR ");
@@ -280,6 +295,14 @@ void main(void)
     servomoteur.etat = E_DESACTIVE;
     servomoteur.valeur = 0;
 
+    Init_robot();
+    /* Timer
+    TA0CTL=0|(TASSEL_2|ID_3);//sourceSMCLK,pasdepredivisionID_0
+    TA0CTL|=MC_3;//comptageenmodeupdown
+    TA0CTL|=TAIE;//autorisationinterruptionTAIE
+    TA0CCR0=62500;//periode timer pour 1s*/
+    Set_Direction(AVANCER);
+
     if(CALBC1_1MHZ==0xFF || CALDCO_1MHZ==0xFF)
     {
         __bis_SR_register(LPM4_bits); // Low Power Mode #trap on Error
@@ -295,7 +318,6 @@ void main(void)
 
     __bis_SR_register(GIE); // interrupts enabled
 
-    TXdata('>');
     while(1);
 }
 

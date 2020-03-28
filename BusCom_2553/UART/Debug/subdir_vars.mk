@@ -11,31 +11,37 @@ CMD_SRCS += \
 C_SRCS += \
 ../ADC.c \
 ../Afficheur.c \
+../Dplc.c \
 ../main.c 
 
 C_DEPS += \
 ./ADC.d \
 ./Afficheur.d \
+./Dplc.d \
 ./main.d 
 
 OBJS += \
 ./ADC.obj \
 ./Afficheur.obj \
+./Dplc.obj \
 ./main.obj 
 
 OBJS__QUOTED += \
 "ADC.obj" \
 "Afficheur.obj" \
+"Dplc.obj" \
 "main.obj" 
 
 C_DEPS__QUOTED += \
 "ADC.d" \
 "Afficheur.d" \
+"Dplc.d" \
 "main.d" 
 
 C_SRCS__QUOTED += \
 "../ADC.c" \
 "../Afficheur.c" \
+"../Dplc.c" \
 "../main.c" 
 
 

@@ -12,6 +12,7 @@ GEN_CMDS__FLAG :=
 ORDERED_OBJS += \
 "./ADC.obj" \
 "./Afficheur.obj" \
+"./Dplc.obj" \
 "./main.obj" \
 "../lnk_msp430g2553.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -156,8 +157,8 @@ UART.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "ADC.obj" "Afficheur.obj" "main.obj" 
-	-$(RM) "ADC.d" "Afficheur.d" "main.d" 
+	-$(RM) "ADC.obj" "Afficheur.obj" "Dplc.obj" "main.obj" 
+	-$(RM) "ADC.d" "Afficheur.d" "Dplc.d" "main.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
