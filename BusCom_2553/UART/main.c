@@ -66,7 +66,7 @@ void TXdata( unsigned char c )
             }
             break;
 
-        case 'd':
+        case 'e':
             strcpy(stringPrint,"Valeurs de debug:\n\r\tInfrarouge:  Etat: ");
             if(infrarouge.etat == E_ACTIVE)
             {
@@ -135,7 +135,7 @@ void TXdata( unsigned char c )
                 i++;
             }
             i = 0;
-            strcpy(stringPrint,"\ts: allumer/eteindre le servomoteur\n\r\tx: eteindre les capteurs et le servomoteur\n\r\td: afficher les valeurs de debug\n\r\th: afficher l'aide\n\r");
+            strcpy(stringPrint,"\tr: allumer/eteindre le servomoteur\n\r\tx: eteindre les capteurs et le servomoteur\n\r\te: afficher les valeurs de debug\n\r\th: afficher l'aide\n\r");
             while(stringPrint[i] != '\0')
             {
                 while (!(IFG2 & UCA0TXIFG));  // USCI_A0 TX buffer ready?
@@ -166,6 +166,29 @@ void TXdata( unsigned char c )
             }
             break;
 
+        case 's':
+            Set_Direction(RECULER);
+            break;
+
+        case 'q':
+            Set_Direction(GAUCHE);
+            break;
+
+        case 'd':
+            Set_Direction(DROITE);
+            break;
+
+        case 0x20:
+            if(TA1CCR1!=0)
+            {
+                Set_vitesse(0,0);
+            }
+            else
+            {
+                Set_vitesse(150,150);
+            }
+            break;
+
         case 'u':
             strcpy(stringPrint,"US ");
             if(ultrason.etat == E_DESACTIVE)
@@ -188,7 +211,7 @@ void TXdata( unsigned char c )
             }
             break;
 
-        case 's':
+        case 'r':
             strcpy(stringPrint,"Servomoteur ");
             if(servomoteur.etat == E_DESACTIVE)
             {
@@ -223,6 +246,10 @@ void TXdata( unsigned char c )
                 UCA0TXBUF = stringPrint[i];              // TX -> RXed character
                 i++;
             }
+            break;
+
+        case 'z':
+            Set_Direction(AVANCER);
             break;
 
         default:
