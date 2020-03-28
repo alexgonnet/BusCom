@@ -1,10 +1,11 @@
 //------------------------------------------------------------------------------
-// uart_simple.c
 //
-// test de l'UART : cho des caract
+//
+//
 //------------------------------------------------------------------------------
 #include <msp430g2553.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef enum
 {
@@ -12,10 +13,16 @@ typedef enum
     E_DESACTIVE = 0x00
 } TE_State;
 
+typedef struct
+{
+    TE_State etat;
+    int valeur;
+}S_Periph;
 
-TE_State irState = E_DESACTIVE;
-TE_State usState = E_DESACTIVE;
-TE_State servoState = E_DESACTIVE;
+
+S_Periph servomoteur;
+S_Periph infrarouge;
+S_Periph ultrason;
 
 
 void InitUART(void)
@@ -39,20 +46,17 @@ void InitUART(void)
 
 void TXdata( unsigned char c )
 {
-    /*char active[13] = "active\n\r";
-        char desactive[16] = "desactive\n\r";
-        char activeAll[46] = "IR active\tUS active\tServomoteur active\n\r";
-        char desactiveAll[56] = "IR desactive\tUS desactive\tServomoteur desactive\n\r";
-*/
+
     unsigned int i = 0;
+    char valeur[50];
     unsigned char stringPrint[150];
     switch(c)
     {
         case 'a':
             P1OUT |= (BIT0|BIT6); // debug instruction
-            irState = E_ACTIVE;
-            usState = E_ACTIVE;
-            servoState = E_ACTIVE;
+            infrarouge.etat = E_ACTIVE;
+            ultrason.etat = E_ACTIVE;
+            servomoteur.etat = E_ACTIVE;
             strcpy(stringPrint,"IR active\tUS active\tServomoteur active\n\r");
             while(stringPrint[i] != '\0')
             {
@@ -62,19 +66,18 @@ void TXdata( unsigned char c )
             }
             break;
 
-        case 'i':
-            strcpy(stringPrint,"IR ");
-            if(irState == E_DESACTIVE)
+        case 'd':
+            strcpy(stringPrint,"Valeurs de debug:\n\r\tInfrarouge:  Etat: ");
+            if(infrarouge.etat == E_ACTIVE)
             {
-                strcat(stringPrint,"active\n\r");
-                irState = E_ACTIVE;
-                P1OUT |= BIT0; // debug instruction
+                strcat(stringPrint,"active\t Valeur: ");
+                sprintf(valeur, "%d", infrarouge.valeur);
+                strcat(stringPrint, valeur);
+                strcat(stringPrint, "\n\r");
             }
             else
             {
-                strcat(stringPrint,"desactive\n\r");
-               irState = E_DESACTIVE;
-               P1OUT &= ~BIT0; // debug instruction
+                strcat(stringPrint,"desactive\t Valeur: 0\n\r");
             }
             while(stringPrint[i] != '\0')
             {
@@ -82,21 +85,18 @@ void TXdata( unsigned char c )
                 UCA0TXBUF = stringPrint[i];              // TX -> RXed character
                 i++;
             }
-            break;
-
-        case 'u':
-            strcpy(stringPrint,"US ");
-            if(usState == E_DESACTIVE)
+            i = 0;
+            strcpy(stringPrint,"\tUltrason:    Etat: ");
+            if(ultrason.etat == E_ACTIVE)
             {
-                strcat(stringPrint,"active\n\r");
-                usState = E_ACTIVE;
-                P1OUT |= BIT6; // debug instruction
+                strcat(stringPrint,"active\t Valeur: ");
+                sprintf(valeur, "%d", ultrason.valeur);
+                strcat(stringPrint, valeur);
+                strcat(stringPrint, "\n\r");
             }
             else
             {
-               strcat(stringPrint,"desactive\n\r");
-               usState = E_DESACTIVE;
-               P1OUT &= ~BIT6; // debug instruction
+                strcat(stringPrint,"desactive\t Valeur: 0\n\r");
             }
             while(stringPrint[i] != '\0')
             {
@@ -104,23 +104,20 @@ void TXdata( unsigned char c )
                 UCA0TXBUF = stringPrint[i];              // TX -> RXed character
                 i++;
             }
-            break;
-
-        case 's':
-            strcpy(stringPrint,"Servomoteur ");
-            if(servoState == E_DESACTIVE)
+            i = 0;
+            strcpy(stringPrint,"\tServomoteur: Etat: ");
+            if(servomoteur.etat == E_ACTIVE)
             {
-                strcat(stringPrint,"active\n\r");
-                servoState = E_ACTIVE;
+                strcat(stringPrint,"active\t Valeur: ");
+                sprintf(valeur, "%d", servomoteur.valeur);
+                strcat(stringPrint, valeur);
+                strcat(stringPrint, "\n\r");
             }
             else
             {
-                strcat(stringPrint,"desactive\n\r");
-                servoState = E_DESACTIVE;
+                strcat(stringPrint,"desactive\t Valeur: 0\n\r");
             }
-            P1OUT ^= (BIT0|BIT6); // debug instruction
-            __delay_cycles(1000); // debug instruction
-            P1OUT ^= (BIT0|BIT6); // debug instruction
+
             while(stringPrint[i] != '\0')
             {
                 while (!(IFG2 & UCA0TXIFG));  // USCI_A0 TX buffer ready?
@@ -147,11 +144,78 @@ void TXdata( unsigned char c )
             }
             break;
 
+        case 'i':
+            strcpy(stringPrint,"IR ");
+            if(infrarouge.etat == E_DESACTIVE)
+            {
+                strcat(stringPrint,"active\n\r");
+                infrarouge.etat = E_ACTIVE;
+                P1OUT |= BIT0; // debug instruction
+            }
+            else
+            {
+                strcat(stringPrint,"desactive\n\r");
+                infrarouge.etat = E_DESACTIVE;
+                P1OUT &= ~BIT0; // debug instruction
+            }
+            while(stringPrint[i] != '\0')
+            {
+                while (!(IFG2 & UCA0TXIFG));  // USCI_A0 TX buffer ready?
+                UCA0TXBUF = stringPrint[i];              // TX -> RXed character
+                i++;
+            }
+            break;
+
+        case 'u':
+            strcpy(stringPrint,"US ");
+            if(ultrason.etat == E_DESACTIVE)
+            {
+                strcat(stringPrint,"active\n\r");
+                ultrason.etat = E_ACTIVE;
+                P1OUT |= BIT6; // debug instruction
+            }
+            else
+            {
+               strcat(stringPrint,"desactive\n\r");
+               ultrason.etat = E_DESACTIVE;
+               P1OUT &= ~BIT6; // debug instruction
+            }
+            while(stringPrint[i] != '\0')
+            {
+                while (!(IFG2 & UCA0TXIFG));  // USCI_A0 TX buffer ready?
+                UCA0TXBUF = stringPrint[i];              // TX -> RXed character
+                i++;
+            }
+            break;
+
+        case 's':
+            strcpy(stringPrint,"Servomoteur ");
+            if(servomoteur.etat == E_DESACTIVE)
+            {
+                strcat(stringPrint,"active\n\r");
+                servomoteur.etat = E_ACTIVE;
+            }
+            else
+            {
+                strcat(stringPrint,"desactive\n\r");
+                servomoteur.etat = E_DESACTIVE;
+            }
+            P1OUT ^= (BIT0|BIT6); // debug instruction
+            __delay_cycles(1000); // debug instruction
+            P1OUT ^= (BIT0|BIT6); // debug instruction
+            while(stringPrint[i] != '\0')
+            {
+                while (!(IFG2 & UCA0TXIFG));  // USCI_A0 TX buffer ready?
+                UCA0TXBUF = stringPrint[i];              // TX -> RXed character
+                i++;
+            }
+            break;
+
         case 'x':
             P1OUT &= ~(BIT0|BIT6); // debug instruction
-            irState = E_DESACTIVE;
-            usState = E_DESACTIVE;
-            servoState = E_DESACTIVE;
+            infrarouge.etat = E_DESACTIVE;
+            ultrason.etat = E_DESACTIVE;
+            servomoteur.etat = E_DESACTIVE;
             strcpy(stringPrint,"IR desactive\tUS desactive\tServomoteur desactive\n\r");
             while(stringPrint[i] != '\0')
             {
@@ -181,6 +245,13 @@ void main(void)
     P1OUT &= ~(BIT0|BIT6);
     // Stop watchdog timer to prevent time out reset
     WDTCTL = WDTPW | WDTHOLD;
+
+    infrarouge.etat = E_DESACTIVE;
+    infrarouge.valeur = 0;
+    ultrason.etat = E_DESACTIVE;
+    ultrason.valeur = 0;
+    servomoteur.etat = E_DESACTIVE;
+    servomoteur.valeur = 0;
 
     if(CALBC1_1MHZ==0xFF || CALDCO_1MHZ==0xFF)
     {
