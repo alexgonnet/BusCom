@@ -3,13 +3,13 @@
 
 void init_send(){
     // led
-    P1DIR |=  BIT0;
-    P1OUT &= ~BIT0;
-
+   /* P1DIR |=  BIT0;
+    P1OUT &= ~BIT0;*/
+/*
     P1OUT = 0;
     P1OUT |= 0x02;
     P1DIR |= 0x02;
-
+*/
 
     // USI Config. for SPI 3 wires Slave Op.
     // P1SEL Ref. p41,42 SLAS694J used by USIPEx
