@@ -1,15 +1,15 @@
 # FIXED
 
 ADC.obj: ../ADC.c
-ADC.obj: C:/ti/ccsv7/ccs_base/msp430/include/msp430.h
-ADC.obj: C:/ti/ccsv7/ccs_base/msp430/include/msp430g2553.h
-ADC.obj: C:/ti/ccsv7/ccs_base/msp430/include/in430.h
-ADC.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include/intrinsics.h
-ADC.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include/intrinsics_legacy_undefs.h
+ADC.obj: D:/ti/ccs1000/ccs/ccs_base/msp430/include/msp430.h
+ADC.obj: D:/ti/ccs1000/ccs/ccs_base/msp430/include/msp430g2553.h
+ADC.obj: D:/ti/ccs1000/ccs/ccs_base/msp430/include/in430.h
+ADC.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics.h
+ADC.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics_legacy_undefs.h
 
 ../ADC.c: 
-C:/ti/ccsv7/ccs_base/msp430/include/msp430.h: 
-C:/ti/ccsv7/ccs_base/msp430/include/msp430g2553.h: 
-C:/ti/ccsv7/ccs_base/msp430/include/in430.h: 
-C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include/intrinsics.h: 
-C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.6.LTS/include/intrinsics_legacy_undefs.h: 
+D:/ti/ccs1000/ccs/ccs_base/msp430/include/msp430.h: 
+D:/ti/ccs1000/ccs/ccs_base/msp430/include/msp430g2553.h: 
+D:/ti/ccs1000/ccs/ccs_base/msp430/include/in430.h: 
+D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics.h: 
+D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics_legacy_undefs.h: 

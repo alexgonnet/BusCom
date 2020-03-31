@@ -41,7 +41,6 @@ C_DEPS__QUOTED += \
 C_SRCS__QUOTED += \
 "../ADC.c" \
 "../Afficheur.c" \
-"../Dplc.c" \
-"../main.c" 
+"../Dplc.c" 
 
 
