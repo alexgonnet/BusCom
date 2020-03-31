@@ -20,11 +20,17 @@
  */
 #include <msp430.h>
 #include <intrinsics.h>
+#include <stdio.h>
 
 #include "ADC.h"
+#include "send.h"
+
+#define TRUE 1
+#define FALSE 0
 
 int capt= 0;
 int  infra_centre= 0;
+int danger = 0;
 
 volatile unsigned char RXDta;
 
@@ -85,7 +91,7 @@ void main( void )
     USISRL = 0x23;  // hash, just mean ready; USISRL Vs USIR by ~USI16B set to 0
     USICNT = 0x08;
 
-
+    //init_send();
     ADC_init();
 
     init_Timer();
@@ -97,13 +103,17 @@ void main( void )
     P1DIR &= ~BIT3;             //P1.3 en entrée pour l'interrupteur
     P1SEL &= ~BIT3;             // en mode O/I
 
-    __enable_interrupt();//Activation des interruptions
-    //__bis_SR_register(GIE); // general interrupts enable & Low Power Mode
+    //__enable_interrupt();//Activation des interruptions
+    __bis_SR_register(GIE); // general interrupts enable & Low Power Mode
     USICTL0 &= ~USISWRST;
 
 
         while(1)
         {
+            if(danger == 1){
+                danger = 0;
+                //Send_char_SPI('b');
+            }
         }
 
    // USICTL0 &= ~USISWRST;
@@ -115,7 +125,7 @@ void main( void )
 
 /* ************************************************************************* */
 /* VECTEUR INTERRUPTION USI                                                  */
-/* ************************************************************************* *//*
+/* ************************************************************************* */
 #pragma vector=USI_VECTOR
 __interrupt void universal_serial_interface(void)
 {
@@ -131,34 +141,38 @@ __interrupt void universal_serial_interface(void)
         P1OUT &= ~BIT0; //turn off LED
     }
 
-    USISRL = RXDta;
-    USICNT &= ~USI16B;  // re-load counter & ignore USISRH
-    USICNT = 0x08;      // 8 bits count, that re-enable USI for next transfert
+    //USISRL = RXDta;
+    //USICNT &= ~USI16B;  // re-load counter & ignore USISRH
+    //USICNT = 0x08;      // 8 bits count, that re-enable USI for next transfert
 }
 //------------------------------------------------------------------ End ISR
 
-*/
+
 
 #pragma vector=TIMERA0_VECTOR //timer utilisé pour lire les données des capteurs
 __interrupt void detect(void)
 {
     //Equilibre();
     ADC_Demarrer_conversion(0x03); // on lit l'infrarouge du centre
-    if(ADC_Lire_resultat() > 500) // si la valeur est dessus du seuil, on a un obstacle
+    capt = ADC_Lire_resultat();
+    if(capt > 500) // si la valeur est dessus du seuil, on a un obstacle
     {
+        danger = 1;
         //P1OUT &=~BIT6; // Eteindre la Led du port 1 ligne 6
-        if(infra_centre < 51) // on vérifie plusieurs fois la valeur pour éviter les erreurs
-            infra_centre++;
-        P1OUT ^= BIT0; // Faire clignoter la Led a chaque itération
+       // if(infra_centre < 51) // on vérifie plusieurs fois la valeur pour éviter les erreurs
+         //   infra_centre++;
+        //P1OUT ^= BIT0; // Faire clignoter la Led a chaque itération
 
     }
     else
     {
-        P1OUT &=~BIT0; // Eteindre la Led du port 1 ligne 6
-        if(infra_centre > -51)
-            infra_centre--;
+       // P1OUT &=~BIT0; // Eteindre la Led du port 1 ligne 6
+       // if(infra_centre > -51)
+         //   infra_centre--;
+
         //P1OUT ^= BIT6; // Faire clignoter la Led a chaque itération
     }
+
 
 
     TACTL &= ~TAIFG; //RAZ TAIFG
