@@ -6,13 +6,6 @@ main.obj: D:/ti/ccs1000/ccs/ccs_base/msp430/include/msp430g2231.h
 main.obj: D:/ti/ccs1000/ccs/ccs_base/msp430/include/in430.h
 main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics.h
 main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics_legacy_undefs.h
-main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/stdio.h
-main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/_ti_config.h
-main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/linkage.h
-main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/stdarg.h
-main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/sys/_types.h
-main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/sys/cdefs.h
-main.obj: D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/machine/_types.h
 main.obj: ../ADC.h
 main.obj: ../send.h
 
@@ -22,12 +15,5 @@ D:/ti/ccs1000/ccs/ccs_base/msp430/include/msp430g2231.h:
 D:/ti/ccs1000/ccs/ccs_base/msp430/include/in430.h: 
 D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics.h: 
 D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/intrinsics_legacy_undefs.h: 
-D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/stdio.h: 
-D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/_ti_config.h: 
-D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/linkage.h: 
-D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/stdarg.h: 
-D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/sys/_types.h: 
-D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/sys/cdefs.h: 
-D:/ti/ccs1000/ccs/tools/compiler/ti-cgt-msp430_20.2.0.LTS/include/machine/_types.h: 
 ../ADC.h: 
 ../send.h: 

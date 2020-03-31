@@ -1,5 +1,5 @@
 
-#include <msp430.h>
+#include <msp430g2231.h>
 
 
 void ADC_init(void)
