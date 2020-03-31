@@ -25,7 +25,7 @@
 #include "send.h"
 
 volatile unsigned char RXDta;
-unsigned int test = 0;
+unsigned int capt = 0;
 unsigned int danger = 0;
 
 void init_Timer( void )
@@ -74,8 +74,9 @@ void main( void )
 
     while(1)
     {
-        if(test%5 == 0){
+        if(capt > 500){
             danger = 0;
+            capt = 0;
             //Send_char_SPI('b');
         }
     }
@@ -112,7 +113,8 @@ __interrupt void universal_serial_interface(void)
 #pragma vector=TIMERA0_VECTOR //timer utilisé pour lire les données des capteurs
 __interrupt void detect(void)
 {
-    test++;
+    ADC_Demarrer_conversion(0x03); // on lit l'infrarouge du centre
+    capt = ADC_Lire_resultat();
 
 
     TACTL &= ~TAIFG; //RAZ TAIFG
