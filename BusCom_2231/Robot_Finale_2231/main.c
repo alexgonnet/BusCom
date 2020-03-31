@@ -77,7 +77,7 @@ void main( void )
         if(capt > 500){
             danger = 0;
             capt = 0;
-            //Send_char_SPI('b');
+            Send_chaine_SPI("bc");
         }
     }
 }
@@ -101,7 +101,6 @@ __interrupt void universal_serial_interface(void)
     {
         P1OUT &= ~BIT0; //turn off LED
     }
-    USISRL = RXDta;
     USICNT &= ~USI16B;  // re-load counter & ignore USISRH
     USICNT = 0x08;      // 8 bits count, that re-enable USI for next transfert
 }
