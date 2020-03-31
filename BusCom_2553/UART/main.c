@@ -183,14 +183,38 @@ void TXdata( unsigned char c )
 
         case 's':
             Set_Direction(RECULER);
+            if(TA1CCR2!=50)
+            {
+                Set_vitesse(150,150);
+            }
+            else
+            {
+              /* do nothing */
+            }
             break;
 
         case 'q':
             Set_Direction(GAUCHE);
+            if(TA1CCR1!=0)
+            {
+                Set_vitesse(50,50);
+            }
+            else
+            {
+              /* do nothing */
+            }
             break;
 
         case 'd':
             Set_Direction(DROITE);
+            if(TA1CCR1!=0)
+            {
+                Set_vitesse(50,50);
+            }
+            else
+            {
+              /* do nothing */
+            }
             break;
 
         case 0x20:
@@ -264,7 +288,15 @@ void TXdata( unsigned char c )
             break;
 
         case 'z':
-            Set_Direction(AVANCER);
+           Set_Direction(AVANCER);
+           if(TA1CCR2!=50)
+           {
+               Set_vitesse(150,150);
+           }
+           else
+           {
+             /* do nothing */
+           }
             break;
 
         default:
