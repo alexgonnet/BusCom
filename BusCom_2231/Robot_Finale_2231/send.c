@@ -67,20 +67,19 @@ void init_send(){
 
 void Send_char_SPI(unsigned char carac)
 {
-    //while (!(USIIFG & USICTL1));   // attend que USCI_SPI soit dispo.
+    while (!(USIIFG & USICTL1));   // attend que USCI_SPI soit dispo.
     USISRL = carac;
     USICNT &= ~USI16B;
     USICNT = 8;
-    while (!(USIIFG & USICTL1));
 }
 
 
 void Send_chaine_SPI(unsigned char *msg)
 {
-    //while (!(USIIFG & USICTL1));   // attend que USCI_SPI soit dispo.
     unsigned int i = 0;
     for(i = 0; msg[i] != 0x00; i++)
     {
         Send_char_SPI(msg[i]);
     }
+    Send_char_SPI('z');//Caractère de fin de message
 }

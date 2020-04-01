@@ -26,7 +26,7 @@
 
 volatile unsigned char RXDta;
 unsigned int capt = 0;
-unsigned int danger = 0;
+unsigned int state = 0;
 
 void init_Timer( void )
 {
@@ -63,7 +63,6 @@ void main( void )
     init_send();
     ADC_init();
     init_Timer();
-
     // Wait for the SPI clock to be idle (low).
     while ((P1IN & BIT5)) ;
 
@@ -71,13 +70,16 @@ void main( void )
 
     //__bis_SR_register(LPM4_bits | GIE); // general interrupts enable & Low Power Mode
     __enable_interrupt();
-
     while(1)
     {
-        if(capt > 500){
-            danger = 0;
-            capt = 0;
-            Send_chaine_SPI("bc");
+        if(state == 1)
+        {
+            if(capt > 500){
+                capt = 0;
+                TACCR0 = 0;
+                Send_char_SPI('x');//Valeur d'arret
+                TACCR0 = 62500;
+            }
         }
     }
 }
@@ -93,14 +95,20 @@ __interrupt void universal_serial_interface(void)
     while( !(USICTL1 & USIIFG) );   // waiting char by USI counter flag
     RXDta = USISRL;
 
-    if (RXDta == 0x31) //if the input buffer is 0x31 (mainly to read the buffer)
+    if (RXDta == 0x01) //if the input buffer is 0x31 (mainly to read the buffer)
     {
+        state = 1;
         P1OUT |= BIT0; //turn on LED
+        //USISRL = 0x00;
     }
-    else if (RXDta == 0x30)
+    else if (RXDta == 0x00)
     {
+        state = 0;
         P1OUT &= ~BIT0; //turn off LED
+        //USISRL = 0x00;
     }
+
+    USISRL = '\0';
     USICNT &= ~USI16B;  // re-load counter & ignore USISRH
     USICNT = 0x08;      // 8 bits count, that re-enable USI for next transfert
 }
