@@ -26,6 +26,10 @@
 #define DATA_IN     BIT7            // DATA in
 
 unsigned char cmd[10];      // tableau de caracteres lie a la commande user
+unsigned int cmd_spi = 0;
+unsigned int compteur = 0;
+
+unsigned char test[10] = "0";
 
 typedef enum
 {
@@ -162,7 +166,8 @@ void TXdata( unsigned char c )
             if(infrarouge.etat == E_ACTIVE)
             {
                 strcat(stringPrint,"active\t Valeur: ");
-                sprintf(valeur, "%d", infrarouge.valeur);
+                //sprintf(valeur, "%d", infrarouge.valeur);
+                strcpy(valeur, cmd);
                 strcat(stringPrint, valeur);
                 strcat(stringPrint, "\n\r");
             }
@@ -406,7 +411,14 @@ void main(void)
 
     __bis_SR_register(GIE); // interrupts enabled
 
-    while(1);
+    while(1)
+    {
+        if(cmd_spi == 1)
+        {
+            strcpy(test,cmd);
+            infrarouge.valeur = (unsigned int)cmd;
+        }
+    }
 }
 
 // Echo back RXed character, confirm TX buffer is ready first
@@ -414,8 +426,35 @@ void main(void)
 __interrupt void USCI0RX_ISR(void)
 {
     unsigned char c;
-
-    c = UCA0RXBUF;
-    TXdata(c);
+    //UART
+    if (IFG2 & UCA0RXIFG)
+    {
+        c = UCA0RXBUF;
+        TXdata(c);
+    }
+    //SPI
+    else if (IFG2 & UCB0RXIFG)
+    {
+        while( (UCB0STAT & UCBUSY) && !(UCB0STAT & UCOE) );
+        while(!(IFG2 & UCB0RXIFG));
+        cmd[0] = UCB0RXBUF;
+        cmd[1] = 0x00;
+        /*cmd[compteur] = UCB0RXBUF;
+        if(cmd[compteur] == 'z')
+        {
+            cmd[compteur+1] = 0x00;
+            compteur = 0;
+            cmd_spi = 1;
+        }else
+        {
+            compteur++;
+        }*/
+    }
 }
+
+
+
+
+
+
 
