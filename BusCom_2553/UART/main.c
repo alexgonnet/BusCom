@@ -24,9 +24,7 @@
 #define DATA_OUT    BIT6            /* DATA out */
 #define DATA_IN     BIT7            /* DATA in */
 
-unsigned char cmd[10];      
-unsigned int cmd_spi = 0;
-unsigned int compteur = 0;
+unsigned char cmd[10];      /*Get the SPI return value*/
 
 unsigned char test[10] = "0";
 
@@ -396,11 +394,7 @@ void main(void)
 
     Init_robot();
     init_USCI();
-    /* Timer
-    TA0CTL=0|(TASSEL_2|ID_3);//sourceSMCLK,pasdepredivisionID_0
-    TA0CTL|=MC_3;//comptageenmodeupdown
-    TA0CTL|=TAIE;//autorisationinterruptionTAIE
-    TA0CCR0=62500;//periode timer pour 1s*/
+
     Set_Direction(AVANCER);
 
     if(CALBC1_1MHZ==0xFF || CALDCO_1MHZ==0xFF)
@@ -420,11 +414,6 @@ void main(void)
 
     while(1)
     {
-        if(cmd_spi == 1)
-        {
-            strcpy(test,cmd);
-            infrarouge.valeur = (unsigned int)cmd;
-        }
     }
 }
 /* ************************************************************************* */
