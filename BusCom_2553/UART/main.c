@@ -10,8 +10,8 @@
 
 #define RECULER 1
 #define AVANCER 2
-#define GAUCHE 3
-#define DROITE 4
+#define DROITE 3
+#define GAUCHE 4
 
 
 #define LF      0x0A            // line feed or \n
