@@ -1,21 +1,7 @@
 /* ---------------------------------------------------------------------------
- * Carte LAUCHPAD Rev.1.5 - MSP430G2553 - ESIGELEC
- * UltraSonic Sensor SRF05 (or aq.) + Carte d'extension
- * Vcc (3.3V)
- * ---------------------------------------------------------------------------
- * MSP430G2553
- * | 1 |Vcc Vss | 20 |
- * P1.0 | 2 | | 19 | P2.6-<LED]
- * P1.1 | 3 | | 18 | P2.7-<LED]
- * P1.2 | 4 | | 17 | Tst
- * P1.3 | 5 | | 16 | !RST
- * P1.4 | 6 | | 15 | P1.7
- * P1.5 | 7 | | 14 | P1.6-<Trigger]
- * P2.0 | 8 | | 13 | P2.5-<LED]
- * [Echo>-P2.1 | 9 | | 12 | P2.4-<LED]
- * P2.2 | 10 | | 11 | P2.3
- *
- * ---------------------------------------------------------------------------
+ * US Sensor on 2231
+ * BOURG
+ * GONNET
  */
 #include <msp430g2231.h>
 #include <stdlib.h>
@@ -28,53 +14,51 @@ unsigned int t1 = 0, t2 = 0, distance = 0;
 unsigned long delay_measurement = 0;
 
 /* ----------------------------------------------------------------------------
- * Fonction d'initialisation de la carte TI LauchPAD
- * Entrees: -
- * Sorties: -
+ * Initialisation the launchpad
+ * Input: -
+ * Output: -
  */
 void init_BOARD( void )
 {
-    // Stop watchdog timer to prevent time out reset
+    /* Stop watchdog timer to prevent time out reset */
     WDTCTL = WDTPW | WDTHOLD;
 
     if( (CALBC1_1MHZ == 0xFF) || (CALDCO_1MHZ == 0xFF) )
     {
-        __bis_SR_register(LPM4_bits); // #trap
+        __bis_SR_register(LPM4_bits); /* #trap */
     }
     else
     {
-        // Factory Set.
+        /* Factory Set. */
         BCSCTL1 = (0 | CALBC1_1MHZ);
         DCOCTL = (0 | CALDCO_1MHZ);
     }
 
-    //--------------- Secure mode
-    P1SEL = 0x00; // GPIO
-    P1DIR = 0x00; // IN
+    /*--------------- Secure mode */
+    P1SEL = 0x00; /* GPIO */
+    P1DIR = 0x00; /* IN */
 
 
-    P1SEL &= ~BIT0; // Port 1, ligne 0 et 6 en fonction primaire
-        P1DIR |= BIT0; // P1.0 et P1.6 en sortie
-        P1OUT &= BIT0; // P1.0 et P1.6 à 0
+    P1SEL &= ~BIT0; /* Port 1, line 0 and 6 in primary function */
+        P1DIR |= BIT0; /* P1.0 and P1.6 in output */
+        P1OUT &= BIT0; /* P1.0 and P1.6 to 0 */
 
-    // GPIO initialisation
-    P1SEL &= ~BIT6; // US-SRF Trigger Line out
+    /* GPIO initialisation */
+    P1SEL &= ~BIT6; /* US-SRF Trigger Line out */
     P1DIR |= BIT6;
     P1OUT &= ~BIT6;
 
-    P1SEL |= BIT2; // US-SRF Echo line input capture
+    P1SEL |= BIT2; /* US-SRF Echo line input capture */
     P1DIR &= ~BIT2;
 
 }
 
 /* ----------------------------------------------------------------------------
- * Fonction d'initialisation du TIMER
- * Entree : -
- * Sorties: -
+ * Function timer initialization
  */
 void init_TIMER( void )
 {
-    TACTL &= ~MC_0; // arret du timer
+    TACTL &= ~MC_0; /* stop the timer */
     TACTL = TASSEL_2 | ID_0 | MC_1 | TACLR;
     TACCTL0 |= CCIE;
    // TACTL = TASSEL_2 | ID_0 | MC_1 | TAIE | TACLR;
@@ -121,9 +105,7 @@ void TXdata( unsigned char c )
 
 
 /* ----------------------------------------------------------------------------
- * Fonction RADAR en utilisant les 4 LED de la carte d'extension
- * Entree : -
- * Sorties: -
+ * Function RADAR
  */
 void radar( void )
 {
@@ -177,11 +159,11 @@ void main(void)
     }
 }
 
-// --------------------------- R O U T I N E S D ' I N T E R R U P T I O N S
+
 /* ************************************************************************* */
 /* VECTEUR INTERRUPTION TIMER0 */
 /* ************************************************************************* */
-#pragma vector = TIMERA0_VECTOR // Timer A Interrupt Service Routine
+#pragma vector = TIMERA0_VECTOR /* Timer A Interrupt Service Routine */
 __interrupt void timer0_A0_isr(void)
 {
 
@@ -189,37 +171,37 @@ __interrupt void timer0_A0_isr(void)
 
     if( !delay_measurement )
     {
-        //TACCR0 = TRIGGER_PULSE; // 0.000015 s
-        P1OUT |= BIT6; // Trigger ON
+        //TACCR0 = TRIGGER_PULSE; /* 0.000015 s */
+        P1OUT |= BIT6; /* Trigger ON */
         P1OUT &= ~BIT0;
     }
     else
     {
-        P1OUT &= ~BIT6; // trigger OFF
+        P1OUT &= ~BIT6; /* trigger OFF */
         //TACCR0 = MEASUREMENT_PERIOD - 1;
         P1OUT ^= BIT0;
     }
 
     TACTL &= ~TAIFG;
-    TACCTL0 &= ~CCIFG; // unnecessary CCR0 has only one src
+    TACCTL0 &= ~CCIFG; /* unnecessary CCR0 has only one src*/
 }
 
 /* ************************************************************************* */
 /* VECTEUR INTERRUPTION TIMER1 */
-/* ************************************************************************* *//*
+/* ************************************************************************* */
 #pragma vector = TIMERA1_VECTOR
 __interrupt void timer1_A1_isr(void)
 {
     switch(_even_in_range(TAIV,TAIV_TAIFG))
     {
     case TAIV_NONE:
-        break; // no more interrupts pending, exit ISR here.
-    case TAIV_TACCR1: { // CCR1 interrupt - 0x0002
+        break; /* no more interrupts pending, exit ISR here. */
+    case TAIV_TACCR1: { /* CCR1 interrupt - 0x0002*/
         if ( P1IN & BIT2 )
-        { // detect rising edge
+        { /* detect rising edge*/
             t1 = TACCR1;
         }
-        else { // and falling edge
+        else { /* and falling edge */
             t2 = TACCR1;
             if (t2 > t1)
             {
@@ -232,15 +214,15 @@ __interrupt void timer1_A1_isr(void)
         }
         break;
     }
-    case TAIV_6: // reserved
+    case TAIV_6: /* reserved */
         distance = 0;
         break;
-    case TAIV_8: // reserved
+    case TAIV_8: /* reserved */
         distance = 0;
         break;
-    case TAIV_TAIFG: // 0x000A
+    case TAIV_TAIFG: /* 0x000A */
         distance = 0;
-        break; // timer overflow
+        break; /* timer overflow */
     default:
         break;
     }
@@ -248,4 +230,4 @@ __interrupt void timer1_A1_isr(void)
     TACTL &= ~TAIFG;
     TACCTL1 &= ~CCIFG;
 }
-*/
+
