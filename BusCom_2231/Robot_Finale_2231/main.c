@@ -24,7 +24,7 @@ unsigned int state = 0; /* State of the IR sensor : Active or Inactive */
 /* Init the timer */
 void init_Timer( void )
 {
-    TACTL &= ~MC_0; /* arret du timer*/
+    TACTL &= ~MC_0; /* timer stop */
     TACCR0 = 62500;
     TACTL = (0 | TASSEL_2 | MC_3 | ID_3 | TACLR); /* select TimerA source SMCLK, set mode to up-counting*/
     TACCTL0 = 0 | OUTMOD_7 | CCIE; /* select timer compare mode*/
@@ -82,7 +82,7 @@ void main( void )
 // --------------------------- R O U T I N E S   D ' I N T E R R U P T I O N S
 
 /* ************************************************************************* */
-/* VECTEUR INTERRUPTION USI                                                  */
+/* INTERRUPTION VECTOR USI                                                   */
 /* ************************************************************************* */
 #pragma vector=USI_VECTOR
 __interrupt void universal_serial_interface(void)
