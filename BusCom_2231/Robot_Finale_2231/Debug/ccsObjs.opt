@@ -1,1 +1,0 @@
-"./ADC.obj" "./main.obj" "./send.obj" "../lnk_msp430g2231.cmd" -llibc.a 
