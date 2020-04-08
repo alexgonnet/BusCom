@@ -1,6 +1,9 @@
 #include <msp430.h>
 #define VAL_MAX_RC 500
 
+/* ************************************************************************* */
+/* Piece of software developed originally for µP project                     */
+/* ************************************************************************* */
 
 int vitesse1, vitesse2, FLG1 = 0 , FLG2 = 0, FG=0, FG1=0, tour_bis =0, tour_bis1 =0;
 
